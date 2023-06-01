@@ -1,8 +1,14 @@
 const db = require("../../utils/db")();
+const fs = require("fs");
+const path = require("path");
 
 module.exports = (req, res) => {
   db.query(
-    require("fs").readFileSync("./seed.sql").toString(),
+    require("fs")
+      .readFileSync(
+        fs.readFileSync(path.join(`${process.cwd()}/seed.sql`)).toString()
+      )
+      .toString(),
     (err, result) => {
       if (err)
         return res
