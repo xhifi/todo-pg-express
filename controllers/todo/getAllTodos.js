@@ -1,7 +1,16 @@
-const db = require("../../utils/db");
+const db = require("../../utils/db")();
 
 const getAllTodos = (req, res) => {
-  res.send("Get All Accessed");
+  db.query(`SELECT * FROM todos;`)
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return res
+          .status(404)
+          .send({ err: "No entry found inside the database" });
+      }
+      return res.status(200).json(result.rows);
+    })
+    .catch((e) => res.status(500).json({ err: e }));
 };
 
 module.exports = getAllTodos;

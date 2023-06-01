@@ -12,7 +12,6 @@ const addOneTodo = (req, res) => {
 
   db.query(`SELECT * FROM todos WHERE name = $1`, [name])
     .then((data) => {
-      console.log(data);
       if (data.rowCount.length > 0) {
         return res
           .status(400)
@@ -22,10 +21,10 @@ const addOneTodo = (req, res) => {
         `INSERT INTO todos(name, description) VALUES($1, $2) RETURNING *`,
         [name, description]
       )
-        .then((data) => {
-          console.log(data);
+        .then((added) => {
+          console.log(added);
           return res.status(200).json({
-            msg: `The entry with name ${data.rows[0].name} and id ${data.rows[0].id}`,
+            msg: `The entry with name ${added.rows[0].name} and id ${added.rows[0].id} has been added to the system`,
           });
         })
         .catch((e) => {
@@ -35,33 +34,6 @@ const addOneTodo = (req, res) => {
     .catch((e) => {
       res.status(500).send(e);
     });
-};
-
-const addOneTodoAsync = async (req, res) => {
-  const { name, description } = req.body;
-
-  if (!name || name.length < 1) {
-    return res.status(400).send("The name is required");
-  }
-
-  const findEntry = await db.query(`SELECT name from todos WHERE name = $1`, [
-    name,
-  ]);
-  if (findEntry.rowCount > 0) {
-    return res
-      .status(400)
-      .send({ error: "Entry already exists in DB with same name" });
-  }
-  const addEntry = await db.query(
-    `INSERT INTO todos(name, description) VALUES($1, $2) RETURNING *`,
-    [name, description]
-  );
-  if (addEntry.rowCount > 0) {
-    return res.status(200).json({
-      msg: `Your entry with id ${addEntry.rows[0].id} has been added to the database with name ${addEntry.rows[0].name}`,
-    });
-  }
-  return res.status(500).json({ error: "Error inserting data" });
 };
 
 module.exports = addOneTodo;

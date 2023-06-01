@@ -5,10 +5,10 @@ const {
   addOneTodo,
   deleteOneTodo,
   updateOneTodo,
-  deleteAllTodos,
+  getOneTodo,
 } = require("../controllers/todoControllers");
 
-router.route("/").get(getAllTodos).post(addOneTodo).delete(deleteAllTodos);
-router.route("/:id").delete(deleteOneTodo).put(updateOneTodo);
+router.route("/").get(getAllTodos).post(addOneTodo);
+router.route("/:id").delete(deleteOneTodo).put(updateOneTodo).get(getOneTodo);
 
 module.exports = router;
