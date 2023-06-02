@@ -1,7 +1,7 @@
 const db = require("../../utils/db")();
 
 const getAllTodos = (req, res) => {
-  db.query(`SELECT * FROM todos;`)
+  db.query(`SELECT * FROM todos ORDER BY created_at ASC;`)
     .then((result) => {
       if (result.rowCount === 0) {
         return res
