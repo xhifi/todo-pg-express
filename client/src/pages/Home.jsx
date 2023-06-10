@@ -1,40 +1,40 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import RootLayout from "./layouts/RootLayout";
 import { Card } from "../components";
 
 const Home = () => {
-  const [todos, setTodos] = useState([]);
   const [completedTodos, setCompletedTodos] = useState([]);
   const [incompletedTodos, setIncompletedTodos] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/v1/todo/")
-      .then((data) => data.json())
-      .then((items) => {
-        const filteredCompleted = [
-          ...items.filter((item) => item.completed === true),
-        ];
-        const filteredIncomplete = [
-          ...items.filter((item) => item.completed === false),
-        ];
-        setTodos([...items]);
-        setCompletedTodos([...filteredCompleted]);
-        setIncompletedTodos([...filteredIncomplete]);
+    const fetchTodos = async () => {
+      try {
+        const res = await fetch("http://localhost:3001/api/v1/todo/");
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        return error;
+      }
+    };
+
+    fetchTodos()
+      .then((data) => {
+        const completed = data.filter((item) => item.completed === true);
+        const incomplete = data.filter((item) => item.completed === false);
+        setCompletedTodos([...completedTodos, ...completed]);
+        setIncompletedTodos([...incompletedTodos, ...incomplete]);
       })
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        console.log(e);
+      });
   }, []);
+
+  console.log(incompletedTodos);
 
   return (
     <RootLayout>
-      <button
-        className="btn btn-lg btn-warning"
-        onClick={() => {
-          setTodos([...todos.reverse()]);
-        }}
-      >
-        Sort
-      </button>
-
       <div className="container-fluid col-11 mt-4">
         <div className="row row-cols-2">
           <div className="col">
